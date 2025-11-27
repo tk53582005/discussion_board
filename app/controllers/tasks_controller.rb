@@ -1,8 +1,8 @@
 class TasksController < ApplicationController
   before_action :authenticate_user!
   before_action :set_board
-  before_action :set_task, only: [:edit, :update, :destroy]  # showを削除
-  before_action :authorize_user!, only: [:edit, :update, :destroy]
+  before_action :set_task, only: [ :edit, :update, :destroy ]  # showを削除
+  before_action :authorize_user!, only: [ :edit, :update, :destroy ]
 
   def index
     @tasks = @board.tasks.order(due_date: :asc)
