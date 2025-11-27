@@ -2,8 +2,10 @@ Rails.application.routes.draw do
   # Devise routes
   devise_for :users
 
-  # Boards routes
-  resources :boards
+  # Boards routes with nested tasks
+  resources :boards do
+    resources :tasks
+  end
 
   # Home
   get "home/index"
