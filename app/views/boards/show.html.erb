@@ -1,44 +1,63 @@
-<h1><%= @board.title %></h1>
+<div class="bg-white shadow-md rounded-lg p-6 mb-6">
+  <div class="flex justify-between items-start mb-4">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900 mb-2"><%= @board.title %></h1>
+      <p class="text-gray-600 mb-4"><%= @board.description %></p>
+      <div class="text-sm text-gray-500">
+        <p>作成者: <%= @board.user.email %></p>
+        <p>作成日: <%= @board.created_at.strftime("%Y年%m月%d日") %></p>
+      </div>
+    </div>
+    
+    <% if @board.user == current_user %>
+      <div class="flex space-x-2">
+        <%= link_to "編集", edit_board_path(@board), class: "text-blue-600 hover:text-blue-800" %>
+        <%= link_to "削除", board_path(@board), data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？" }, class: "text-red-600 hover:text-red-800" %>
+      </div>
+    <% end %>
+  </div>
+</div>
 
-<p><%= @board.description %></p>
-<p>作成者: <%= @board.user.email %></p>
-<p>作成日: <%= @board.created_at.strftime("%Y年%m月%d日") %></p>
-
-<% if @board.user == current_user %>
-  <%= link_to "編集", edit_board_path(@board) %>
-  <%= link_to "削除",
-              board_path(@board),
-              data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？" } %>
-<% end %>
-
-<hr>
-
-<h2>タスク一覧</h2>
-<%= link_to "新しいタスクを作成", new_board_task_path(@board) %>
+<div class="mb-6 flex justify-between items-center">
+  <h2 class="text-2xl font-bold text-gray-900">タスク一覧</h2>
+  <%= link_to "新しいタスクを作成", new_board_task_path(@board), class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
+</div>
 
 <% if @board.tasks.any? %>
-  <% @board.tasks.order(due_date: :asc).each do |task| %>
-    <div>
-      <% if task.eyecatch.attached? %>
-        <%= image_tag task.eyecatch, style: "max-width: 200px; height: auto;" %>
-      <% end %>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <% @board.tasks.order(due_date: :asc).each do |task| %>
+      <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+        <% if task.eyecatch.attached? %>
+          <%= image_tag task.eyecatch, class: "w-full h-48 object-cover" %>
+        <% end %>
+        
+        <div class="p-6">
+          <h3 class="text-xl font-bold text-gray-900 mb-2">
+            <%= link_to task.title, board_task_path(@board, task), class: "hover:text-blue-600" %>
+          </h3>
+          <p class="text-gray-600 mb-4"><%= truncate(task.content, length: 100) %></p>
+          
+          <div class="text-sm text-gray-500 mb-4">
+            <p>期限: <%= task.due_date.strftime("%Y年%m月%d日") %></p>
+            <p>担当者: <%= task.user.email %></p>
+          </div>
 
-      <h3><%= link_to task.title, board_task_path(@board, task) %></h3>
-      <p><%= task.content %></p>
-      <p>期限: <%= task.due_date.strftime("%Y年%m月%d日") %></p>
-      <p>担当者: <%= task.user.email %></p>
-
-      <% if task.user == current_user %>
-        <%= link_to "編集", edit_board_task_path(@board, task) %>
-        <%= link_to "削除",
-                    board_task_path(@board, task),
-                    data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？" } %>
-      <% end %>
-    </div>
-    <hr>
-  <% end %>
+          <% if task.user == current_user %>
+            <div class="flex space-x-2 pt-4 border-t">
+              <%= link_to "編集", edit_board_task_path(@board, task), class: "text-blue-600 hover:text-blue-800" %>
+              <%= link_to "削除", board_task_path(@board, task), data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？" }, class: "text-red-600 hover:text-red-800" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
 <% else %>
-  <p>タスクはまだありません</p>
+  <div class="bg-white rounded-lg shadow-md p-6 text-center text-gray-500">
+    <p>タスクはまだありません</p>
+  </div>
 <% end %>
 
-<%= link_to "一覧に戻る", boards_path %>
+<div class="mt-6">
+  <%= link_to "一覧に戻る", boards_path, class: "text-blue-600 hover:text-blue-800" %>
+</div>
