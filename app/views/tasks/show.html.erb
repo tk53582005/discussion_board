@@ -1,51 +1,85 @@
-<h1><%= @task.title %></h1>
-
-<% if @task.eyecatch.attached? %>
-  <%= image_tag @task.eyecatch, style: "max-width: 100%; height: auto;" %>
-<% end %>
-
-<p><%= @task.content %></p>
-<p>期限: <%= @task.due_date.strftime("%Y年%m月%d日") %></p>
-<p>担当者: <%= @task.user.email %></p>
-<p>作成日: <%= @task.created_at.strftime("%Y年%m月%d日 %H:%M") %></p>
-
-<% if @task.user == current_user %>
-  <%= link_to "編集", edit_board_task_path(@board, @task) %>
-  <%= link_to "削除", board_task_path(@board, @task), data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？" } %>
-<% end %>
-
-<hr>
-
-<h2>コメント</h2>
-
-<!-- コメント投稿フォーム -->
-<%= form_with model: [@board, @task, Comment.new], local: true do |f| %>
-  <div>
-    <%= f.label :content, "コメント内容" %>
-    <%= f.text_area :content, rows: 3, placeholder: "コメントを入力してください" %>
-  </div>
-  <div>
-    <%= f.submit "コメントする" %>
-  </div>
-<% end %>
-
-<hr>
-
-<!-- コメント一覧 -->
-<% if @task.comments.any? %>
-  <% @task.comments.order(created_at: :desc).each do |comment| %>
-    <div>
-      <p><strong><%= comment.user.email %></strong> - <%= comment.created_at.strftime("%Y年%m月%d日 %H:%M") %></p>
-      <p><%= comment.content %></p>
+<div class="max-w-4xl mx-auto">
+  <!-- タスク情報 -->
+  <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+    <div class="flex justify-between items-start mb-4">
+      <h1 class="text-3xl font-bold text-gray-900"><%= @task.title %></h1>
       
-      <% if comment.user == current_user %>
-        <%= link_to "削除", board_task_comment_path(@board, @task, comment), data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？" } %>
+      <% if @task.user == current_user %>
+        <div class="flex space-x-2">
+          <%= link_to "編集", edit_board_task_path(@board, @task), class: "text-blue-600 hover:text-blue-800" %>
+          <%= link_to "削除", board_task_path(@board, @task), data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？" }, class: "text-red-600 hover:text-red-800" %>
+        </div>
       <% end %>
     </div>
-    <hr>
-  <% end %>
-<% else %>
-  <p>まだコメントはありません</p>
-<% end %>
 
-<%= link_to "ボードに戻る", board_path(@board) %>
+    <% if @task.eyecatch.attached? %>
+      <%= image_tag @task.eyecatch, class: "w-full h-64 object-cover rounded-lg mb-4" %>
+    <% end %>
+
+    <div class="prose max-w-none mb-4">
+      <p class="text-gray-700"><%= simple_format(@task.content) %></p>
+    </div>
+
+    <div class="border-t pt-4 mt-4">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+        <div>
+          <p class="text-gray-500">期限</p>
+          <p class="font-semibold text-gray-900"><%= @task.due_date.strftime("%Y年%m月%d日") %></p>
+        </div>
+        <div>
+          <p class="text-gray-500">担当者</p>
+          <p class="font-semibold text-gray-900"><%= @task.user.email %></p>
+        </div>
+        <div>
+          <p class="text-gray-500">作成日</p>
+          <p class="font-semibold text-gray-900"><%= @task.created_at.strftime("%Y年%m月%d日 %H:%M") %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- コメントセクション -->
+  <div class="bg-white shadow-md rounded-lg p-6">
+    <h2 class="text-2xl font-bold text-gray-900 mb-4">コメント</h2>
+
+    <!-- コメント投稿フォーム -->
+    <%= form_with model: [@board, @task, Comment.new], local: true, class: "mb-6" do |f| %>
+      <div class="mb-4">
+        <%= f.label :content, "コメント内容", class: "block text-gray-700 text-sm font-bold mb-2" %>
+        <%= f.text_area :content, rows: 3, placeholder: "コメントを入力してください", class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+      </div>
+      <div>
+        <%= f.submit "コメントする", class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" %>
+      </div>
+    <% end %>
+
+    <!-- コメント一覧 -->
+    <div class="border-t pt-4">
+      <% if @task.comments.any? %>
+        <div class="space-y-4">
+          <% @task.comments.order(created_at: :desc).each do |comment| %>
+            <div class="bg-gray-50 rounded-lg p-4">
+              <div class="flex justify-between items-start mb-2">
+                <div>
+                  <p class="font-semibold text-gray-900"><%= comment.user.email %></p>
+                  <p class="text-sm text-gray-500"><%= comment.created_at.strftime("%Y年%m月%d日 %H:%M") %></p>
+                </div>
+                
+                <% if comment.user == current_user %>
+                  <%= link_to "削除", board_task_comment_path(@board, @task, comment), data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？" }, class: "text-red-600 hover:text-red-800 text-sm" %>
+                <% end %>
+              </div>
+              <p class="text-gray-700"><%= simple_format(comment.content) %></p>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-gray-500 text-center py-4">まだコメントはありません</p>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="mt-6">
+    <%= link_to "ボードに戻る", board_path(@board), class: "text-blue-600 hover:text-blue-800" %>
+  </div>
+</div>
