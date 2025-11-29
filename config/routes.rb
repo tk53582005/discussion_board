@@ -2,9 +2,11 @@ Rails.application.routes.draw do
   # Devise routes
   devise_for :users
 
-  # Boards routes with nested tasks
+  # Boards routes with nested tasks and comments
   resources :boards do
-    resources :tasks
+    resources :tasks do
+      resources :comments, only: [:create, :destroy]
+    end
   end
 
   # Home

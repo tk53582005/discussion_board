@@ -17,6 +17,35 @@
 <hr>
 
 <h2>コメント</h2>
-<p>（コメント機能は後で実装します）</p>
+
+<!-- コメント投稿フォーム -->
+<%= form_with model: [@board, @task, Comment.new], local: true do |f| %>
+  <div>
+    <%= f.label :content, "コメント内容" %>
+    <%= f.text_area :content, rows: 3, placeholder: "コメントを入力してください" %>
+  </div>
+  <div>
+    <%= f.submit "コメントする" %>
+  </div>
+<% end %>
+
+<hr>
+
+<!-- コメント一覧 -->
+<% if @task.comments.any? %>
+  <% @task.comments.order(created_at: :desc).each do |comment| %>
+    <div>
+      <p><strong><%= comment.user.email %></strong> - <%= comment.created_at.strftime("%Y年%m月%d日 %H:%M") %></p>
+      <p><%= comment.content %></p>
+      
+      <% if comment.user == current_user %>
+        <%= link_to "削除", board_task_comment_path(@board, @task, comment), data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？" } %>
+      <% end %>
+    </div>
+    <hr>
+  <% end %>
+<% else %>
+  <p>まだコメントはありません</p>
+<% end %>
 
 <%= link_to "ボードに戻る", board_path(@board) %>
