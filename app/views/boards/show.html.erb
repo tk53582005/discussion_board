@@ -6,7 +6,9 @@
 
 <% if @board.user == current_user %>
   <%= link_to "編集", edit_board_path(@board) %>
-  <%= link_to "削除", board_path(@board), data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？" } %>
+  <%= link_to "削除",
+              board_path(@board),
+              data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？" } %>
 <% end %>
 
 <hr>
@@ -17,6 +19,10 @@
 <% if @board.tasks.any? %>
   <% @board.tasks.order(due_date: :asc).each do |task| %>
     <div>
+      <% if task.eyecatch.attached? %>
+        <%= image_tag task.eyecatch, style: "max-width: 200px; height: auto;" %>
+      <% end %>
+
       <h3><%= link_to task.title, board_task_path(@board, task) %></h3>
       <p><%= task.content %></p>
       <p>期限: <%= task.due_date.strftime("%Y年%m月%d日") %></p>
@@ -24,7 +30,9 @@
 
       <% if task.user == current_user %>
         <%= link_to "編集", edit_board_task_path(@board, task) %>
-        <%= link_to "削除", board_task_path(@board, task), data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？" } %>
+        <%= link_to "削除",
+                    board_task_path(@board, task),
+                    data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？" } %>
       <% end %>
     </div>
     <hr>

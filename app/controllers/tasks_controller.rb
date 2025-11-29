@@ -53,7 +53,7 @@ class TasksController < ApplicationController
   end
 
   def task_params
-    params.require(:task).permit(:title, :content, :due_date)
+    params.require(:task).permit(:title, :content, :due_date, :eyecatch)
   end
 
   def authorize_user!

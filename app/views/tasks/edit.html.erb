@@ -28,6 +28,15 @@
   </div>
 
   <div>
+    <%= f.label :eyecatch, "アイキャッチ画像" %>
+    <%= f.file_field :eyecatch, accept: "image/*" %>
+    <% if @task.eyecatch.attached? %>
+      <p>現在の画像:</p>
+      <%= image_tag @task.eyecatch, style: "max-width: 200px;" %>
+    <% end %>
+  </div>
+
+  <div>
     <%= f.submit "更新する" %>
     <%= link_to "キャンセル", board_path(@board) %>
   </div>
