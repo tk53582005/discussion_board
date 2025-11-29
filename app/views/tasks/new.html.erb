@@ -28,6 +28,11 @@
   </div>
 
   <div>
+    <%= f.label :eyecatch, "アイキャッチ画像" %>
+    <%= f.file_field :eyecatch, accept: "image/*" %>
+  </div>
+
+  <div>
     <%= f.submit "作成する" %>
     <%= link_to "キャンセル", board_path(@board) %>
   </div>
