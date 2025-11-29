@@ -5,7 +5,7 @@ Rails.application.routes.draw do
   # Boards routes with nested tasks and comments
   resources :boards do
     resources :tasks do
-      resources :comments, only: [:create, :destroy]
+      resources :comments, only: [ :create, :destroy ]
     end
   end
 
